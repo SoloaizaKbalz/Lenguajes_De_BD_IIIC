@@ -1,0 +1,15 @@
+<%- include('../partials/head', { titulo: 'Nueva orden' }) %>
+<% const v = k => (o && o[k]) || ''; %>
+<div class="encabezado"><div><h1>Nueva orden de servicio</h1><p>La orden inicia en estado «Pendiente».</p></div></div>
+<% if (error) { %><div class="alerta error"><%= error %></div><% } %>
+<form class="tarjeta formulario" action="/servicio-tecnico/nueva" method="POST">
+  <div class="campos">
+    <div class="campo"><label>Cliente</label><select name="cliente" required><option value="">Seleccione…</option>
+      <% clientes.forEach(c => { %><option value="<%= c.IDCLIENTE %>" <%= String(v('cliente')) === String(c.IDCLIENTE) ? 'selected' : '' %>><%= c.NOMBRECOMPLETO %></option><% }) %></select></div>
+    <div class="campo"><label>Producto</label><select name="producto" required><option value="">Seleccione…</option>
+      <% productos.forEach(p => { %><option value="<%= p.IDPRODUCTO %>" <%= String(v('producto')) === String(p.IDPRODUCTO) ? 'selected' : '' %>><%= p.NOMBREPRODUCTO %></option><% }) %></select></div>
+    <div class="campo ancho"><label>Problema reportado</label><input name="problema" required maxlength="300" value="<%= v('problema') %>"></div>
+  </div>
+  <div class="acciones-form"><button class="btn" type="submit">Guardar</button><a class="btn secundario" href="/servicio-tecnico">Cancelar</a></div>
+</form>
+<%- include('../partials/foot') %>

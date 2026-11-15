@@ -1,0 +1,16 @@
+<%- include('../partials/head', { titulo: 'Nueva garantía' }) %>
+<% const v = k => (g && g[k]) || ''; %>
+<div class="encabezado"><div><h1>Nueva garantía</h1><p>La fecha de fin debe ser posterior a la de inicio.</p></div></div>
+<% if (error) { %><div class="alerta error"><%= error %></div><% } %>
+<form class="tarjeta formulario" action="/garantias/nueva" method="POST">
+  <div class="campos">
+    <div class="campo"><label>Cliente</label><select name="cliente" required><option value="">Seleccione…</option>
+      <% clientes.forEach(c => { %><option value="<%= c.IDCLIENTE %>" <%= String(v('cliente')) === String(c.IDCLIENTE) ? 'selected' : '' %>><%= c.NOMBRECOMPLETO %></option><% }) %></select></div>
+    <div class="campo"><label>Producto</label><select name="producto" required><option value="">Seleccione…</option>
+      <% productos.forEach(p => { %><option value="<%= p.IDPRODUCTO %>" <%= String(v('producto')) === String(p.IDPRODUCTO) ? 'selected' : '' %>><%= p.NOMBREPRODUCTO %></option><% }) %></select></div>
+    <div class="campo"><label>Inicio</label><input type="date" name="inicio" required value="<%= v('inicio') || fechaInput(new Date()) %>"></div>
+    <div class="campo"><label>Fin</label><input type="date" name="fin" required value="<%= v('fin') %>"></div>
+  </div>
+  <div class="acciones-form"><button class="btn" type="submit">Guardar</button><a class="btn secundario" href="/garantias">Cancelar</a></div>
+</form>
+<%- include('../partials/foot') %>

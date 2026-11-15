@@ -1,0 +1,13 @@
+<%- include('../partials/head', { titulo }) %>
+<% const v = k => (e && e[k] !== undefined && e[k] !== null) ? e[k] : ''; %>
+<div class="encabezado"><div><h1><%= titulo %></h1><p>La persona (cédula) debe estar registrada previamente.</p></div></div>
+<form class="tarjeta formulario" action="<%= accion %>" method="POST">
+  <div class="campos">
+    <div class="campo"><label>Cédula</label><input name="cedula" required value="<%= v('cedula') %>"></div>
+    <div class="campo"><label>Estado</label><select name="estado" required><% ['Activo','Inactivo'].forEach(s => { %><option <%= v('estado') === s ? 'selected' : '' %>><%= s %></option><% }) %></select></div>
+    <div class="campo ancho"><label>Sucursal</label><select name="sucursal" required><option value="">Seleccione…</option>
+      <% sucursales.forEach(s => { %><option value="<%= s.IDSUCURSAL %>" <%= String(v('sucursal')) === String(s.IDSUCURSAL) ? 'selected' : '' %>><%= s.NOMBRESUCURSAL %></option><% }) %></select></div>
+  </div>
+  <div class="acciones-form"><button class="btn" type="submit">Guardar</button><a class="btn secundario" href="/empleados">Cancelar</a></div>
+</form>
+<%- include('../partials/foot') %>

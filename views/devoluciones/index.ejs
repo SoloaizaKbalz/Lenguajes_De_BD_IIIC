@@ -1,0 +1,11 @@
+<%- include('../partials/head', { titulo: 'Devoluciones' }) %>
+<div class="encabezado"><div><h1>Devoluciones</h1><p>Productos devueltos por los clientes · <%= devoluciones.length %> registros</p></div><a class="btn" href="/devoluciones/nueva">+ Nueva devolución</a></div>
+<div class="tabla-caja"><table><thead><tr><th>N.º</th><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Motivo</th><th class="num">Cant.</th><th>Estado</th><th></th></tr></thead><tbody>
+  <% devoluciones.forEach(d => { %><tr><td class="fuerte">#<%= d.IDDEVOLUCION %></td><td><%= fecha(d.FECHADEVOLUCION) %></td><td><%= d.NOMBRECLIENTE %></td><td><%= d.NOMBREPRODUCTO %></td><td><%= d.MOTIVODEVOLUCION %></td><td class="num"><%= d.CANTIDADDEVUELTA %></td><td><span class="pill <%= d.ESTADODEVOLUCION %>"><%= d.ESTADODEVOLUCION %></span></td>
+    <td class="acciones"><% if (d.ESTADODEVOLUCION === 'Pendiente') { %>
+      <form action="/devoluciones/resolver/<%= d.IDDEVOLUCION %>" method="POST" style="display:inline"><input type="hidden" name="estado" value="Aceptada"><button class="btn chico">Aceptar</button></form>
+      <form action="/devoluciones/resolver/<%= d.IDDEVOLUCION %>" method="POST" style="display:inline"><input type="hidden" name="estado" value="Rechazada"><button class="btn secundario chico">Rechazar</button></form>
+    <% } %></td></tr><% }) %>
+  <% if (!devoluciones.length) { %><tr><td colspan="8" class="vacio">No hay devoluciones registradas.</td></tr><% } %>
+</tbody></table></div>
+<%- include('../partials/foot') %>

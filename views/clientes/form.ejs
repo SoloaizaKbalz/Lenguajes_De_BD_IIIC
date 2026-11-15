@@ -1,0 +1,19 @@
+<%- include('../partials/head', { titulo: 'Nuevo cliente' }) %>
+<% const v = k => (c && c[k]) || ''; %>
+<div class="encabezado"><div><h1>Nuevo cliente</h1><p>Se registra la persona, su dirección y el cliente en un solo paso.</p></div></div>
+<form class="tarjeta formulario" action="/clientes/nuevo" method="POST">
+  <div class="campos">
+    <div class="campo"><label>Cédula</label><input name="cedula" required placeholder="1-1234-5678" value="<%= v('cedula') %>"></div>
+    <div class="campo"><label>Teléfono</label><input name="telefono" required placeholder="8888-8888" value="<%= v('telefono') %>"></div>
+    <div class="campo"><label>Nombre</label><input name="nombre" required value="<%= v('nombre') %>"></div>
+    <div class="campo"><label>Primer apellido</label><input name="apellido1" required value="<%= v('apellido1') %>"></div>
+    <div class="campo"><label>Segundo apellido</label><input name="apellido2" value="<%= v('apellido2') %>"></div>
+    <div class="campo"><label>Correo</label><input name="correo" type="email" required value="<%= v('correo') %>"></div>
+    <div class="campo"><label>Provincia</label><input name="provincia" required value="<%= v('provincia') %>"></div>
+    <div class="campo"><label>Cantón</label><input name="canton" required value="<%= v('canton') %>"></div>
+    <div class="campo"><label>Distrito</label><input name="distrito" required value="<%= v('distrito') %>"></div>
+    <div class="campo"><label>Otras señas</label><input name="otrassenas" value="<%= v('otrassenas') %>"></div>
+  </div>
+  <div class="acciones-form"><button class="btn" type="submit">Guardar</button><a class="btn secundario" href="/clientes">Cancelar</a></div>
+</form>
+<%- include('../partials/foot') %>

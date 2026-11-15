@@ -1,0 +1,35 @@
+<%- include('../partials/head', { titulo: 'Registrar venta' }) %>
+<div class="encabezado"><div><h1>Registrar venta</h1><p>Seleccione productos y confirme la venta.</p></div><a class="btn secundario" href="/ventas">Historial de ventas</a></div>
+<div class="pos">
+  <section>
+    <div class="filtros" style="margin-bottom:0"><input id="buscar" type="search" placeholder="Buscar producto por nombre…" style="width:100%"></div>
+    <div class="chips" id="chips"><button class="chip activo" data-cat="">Todos</button>
+      <% [...new Set(productos.map(p => p.NOMBRECATEGORIA))].forEach(c => { %><button class="chip" data-cat="<%= c %>"><%= c %></button><% }) %>
+    </div>
+    <div class="productos-grid" id="grid">
+      <% productos.forEach(p => { const agotado = p.EXISTENCIASPRODUCTO <= 0; %>
+        <article class="prod" data-nombre="<%= p.NOMBREPRODUCTO.toLowerCase() %>" data-cat="<%= p.NOMBRECATEGORIA %>">
+          <div class="foto"><svg viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div>
+          <b><%= p.NOMBREPRODUCTO %></b>
+          <div class="fila"><span class="precio"><%= colones(p.PRECIOPRODUCTO) %></span><small class="<%= agotado ? 'agotado' : '' %>"><%= agotado ? 'Agotado' : p.EXISTENCIASPRODUCTO + ' disponibles' %></small></div>
+          <button class="btn" <%= agotado ? 'disabled' : '' %> data-id="<%= p.IDPRODUCTO %>" data-nombre="<%= p.NOMBREPRODUCTO %>" data-precio="<%= p.PRECIOPRODUCTO %>" data-stock="<%= p.EXISTENCIASPRODUCTO %>"><%= agotado ? 'Sin stock' : '+ Agregar' %></button>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+  <aside class="tarjeta carrito">
+    <h2 style="margin:0">Venta actual</h2>
+    <div class="campo"><label>Cliente</label><select id="cliente"><option value="">Seleccione…</option>
+      <% clientes.forEach(c => { %><option value="<%= c.IDCLIENTE %>"><%= c.NOMBRECOMPLETO %></option><% }) %></select></div>
+    <div class="campo"><label>Atiende</label><select id="empleado"><option value="">Seleccione…</option>
+      <% empleados.forEach(e => { %><option value="<%= e.IDEMPLEADO %>" <%= usuario && usuario.id === e.IDEMPLEADO ? 'selected' : '' %>><%= e.NOMBRECOMPLETO %></option><% }) %></select></div>
+    <div id="lineas"><p class="carrito-vacio">Aún no hay productos en la venta.</p></div>
+    <div class="resumen-fila"><span>Subtotal</span><span id="subtotal">₡0</span></div>
+    <div class="resumen-fila"><span>IVA 13 %</span><span id="iva">₡0</span></div>
+    <div class="resumen-total"><span>Total</span><b id="total">₡0</b></div>
+    <div id="mensaje"></div>
+    <button class="btn" id="registrar" disabled>Registrar venta</button>
+  </aside>
+</div>
+<script src="/js/pos.js"></script>
+<%- include('../partials/foot') %>

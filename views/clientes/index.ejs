@@ -1,0 +1,10 @@
+<%- include('../partials/head', { titulo: 'Clientes' }) %>
+<div class="encabezado"><div><h1>Clientes</h1><p>Registro de clientes · <%= clientes.length %> clientes</p></div><a class="btn" href="/clientes/nuevo">+ Nuevo cliente</a></div>
+<div class="filtros"><input id="buscar" type="search" placeholder="Buscar por nombre o cédula…"></div>
+<div class="tabla-caja"><table id="tabla"><thead><tr><th>ID</th><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Correo</th><th class="num">Compras</th><th class="num">Total comprado</th><th></th></tr></thead><tbody>
+  <% clientes.forEach(c => { %><tr data-nombre="<%= (c.NOMBRECOMPLETO + ' ' + c.CEDULA).toLowerCase() %>"><td><%= c.IDCLIENTE %></td><td class="fuerte"><%= c.NOMBRECOMPLETO %></td><td><%= c.CEDULA %></td><td><%= c.TELEFONO %></td><td><%= c.CORREO %></td><td class="num"><%= c.CANTIDADVENTAS %></td><td class="num"><%= colones(c.TOTALCOMPRADO) %></td>
+    <td class="acciones"><form action="/clientes/borrar/<%= c.IDCLIENTE %>" method="POST" onsubmit="return confirm('¿Eliminar este cliente?');"><button class="btn peligro chico">Borrar</button></form></td></tr><% }) %>
+  <% if (!clientes.length) { %><tr><td colspan="8" class="vacio">No hay clientes registrados.</td></tr><% } %>
+</tbody></table></div>
+<script src="/js/filtro-tabla.js"></script>
+<%- include('../partials/foot') %>

@@ -1,0 +1,10 @@
+<%- include('../partials/head', { titulo: 'Empleados' }) %>
+<div class="encabezado"><div><h1>Empleados</h1><p>Personal de la tienda · <%= empleados.length %> empleados</p></div><a class="btn" href="/empleados/nuevo">+ Nuevo empleado</a></div>
+<div class="filtros"><input id="buscar" type="search" placeholder="Buscar por nombre…"></div>
+<div class="tabla-caja"><table id="tabla"><thead><tr><th>ID</th><th>Nombre</th><th>Cédula</th><th>Puesto</th><th>Sucursal</th><th>Estado</th><th></th></tr></thead><tbody>
+  <% empleados.forEach(e => { %><tr data-nombre="<%= e.NOMBRECOMPLETO.toLowerCase() %>"><td><%= e.IDEMPLEADO %></td><td class="fuerte"><%= e.NOMBRECOMPLETO %></td><td><%= e.CEDULA %></td><td><%= e.NOMBREROL %></td><td><%= e.NOMBRESUCURSAL %></td><td><span class="pill <%= e.ESTADOEMPLEADO %>"><%= e.ESTADOEMPLEADO %></span></td>
+    <td class="acciones"><a class="btn secundario chico" href="/empleados/editar/<%= e.IDEMPLEADO %>">Editar</a></td></tr><% }) %>
+  <% if (!empleados.length) { %><tr><td colspan="7" class="vacio">No hay empleados registrados.</td></tr><% } %>
+</tbody></table></div>
+<script src="/js/filtro-tabla.js"></script>
+<%- include('../partials/foot') %>

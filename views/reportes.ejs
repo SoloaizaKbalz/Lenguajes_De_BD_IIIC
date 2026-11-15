@@ -1,0 +1,35 @@
+<%- include('partials/head', { titulo: 'Reportes' }) %>
+<% const max = Math.max(1, ...d.meses.map(x => x.total)); %>
+<div class="encabezado"><div><h1>Reportes</h1><p>Indicadores de ventas e inventario.</p></div><button class="btn" onclick="window.print()">Imprimir / PDF</button></div>
+<div class="kpis">
+  <div class="kpi destacado"><span>Ventas del mes</span><b><%= colones(d.ventasMes) %></b></div>
+  <div class="kpi"><span>Ventas realizadas</span><b><%= d.cantidadVentasMes %></b></div>
+  <div class="kpi"><span>Ticket promedio</span><b><%= colones(d.ticket) %></b></div>
+  <div class="kpi"><span>Productos agotados</span><b><%= d.agotados %></b></div>
+</div>
+<div class="rejilla dos">
+  <section class="tarjeta"><h2>Ventas por mes</h2>
+    <div class="barras">
+      <% d.meses.forEach(x => { %><div class="barra <%= x.actual ? 'actual' : '' %>" title="<%= colones(x.total) %>"><i style="height:<%= Math.max(2, Math.round(x.total / max * 100)) %>%"></i><span><%= x.etiqueta %></span></div><% }) %>
+    </div>
+  </section>
+  <section class="tarjeta"><h2>Más vendidos</h2>
+    <ul class="lista-simple">
+      <% d.masVendidos.forEach((p, i) => { %><li><span class="num"><%= i + 1 %></span><span class="t"><%= p.nombre %></span><span class="m"><%= p.unidades %> uds</span></li><% }) %>
+    </ul>
+  </section>
+</div>
+<div class="rejilla dos" style="margin-top:22px">
+  <section class="tarjeta"><h2>Productos con stock bajo</h2>
+    <table><thead><tr><th>Producto</th><th class="num">Existencias</th><th>Nivel</th></tr></thead><tbody>
+      <% d.stockBajo.forEach(p => { %><tr><td class="fuerte"><%= p.NOMBREPRODUCTO %></td><td class="num"><%= p.EXISTENCIASPRODUCTO %></td><td><span class="pill <%= p.NIVELSTOCK %>"><%= p.NIVELSTOCK %></span></td></tr><% }) %>
+      <% if (!d.stockBajo.length) { %><tr><td colspan="3" class="vacio">Sin productos con stock bajo.</td></tr><% } %>
+    </tbody></table>
+  </section>
+  <section class="tarjeta"><h2>Inventario por proveedor</h2>
+    <table><thead><tr><th>Proveedor</th><th class="num">Productos</th><th class="num">Valor</th></tr></thead><tbody>
+      <% d.proveedores.forEach(p => { %><tr><td class="fuerte"><%= p.NOMBREPROVEEDOR %></td><td class="num"><%= p.CANTIDADPRODUCTOS %></td><td class="num"><%= colones(p.VALORINVENTARIO) %></td></tr><% }) %>
+    </tbody></table>
+  </section>
+</div>
+<%- include('partials/foot') %>

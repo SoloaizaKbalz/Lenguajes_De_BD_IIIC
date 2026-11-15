@@ -1,0 +1,17 @@
+<%- include('../partials/head', { titulo: 'Nueva devolución' }) %>
+<% const v = k => (d && d[k]) || ''; %>
+<div class="encabezado"><div><h1>Nueva devolución</h1><p>Queda en estado «Pendiente» hasta que se acepte o rechace.</p></div></div>
+<% if (error) { %><div class="alerta error"><%= error %></div><% } %>
+<form class="tarjeta formulario" action="/devoluciones/nueva" method="POST">
+  <div class="campos">
+    <div class="campo"><label>Cliente</label><select name="cliente" required><option value="">Seleccione…</option>
+      <% clientes.forEach(c => { %><option value="<%= c.IDCLIENTE %>" <%= String(v('cliente')) === String(c.IDCLIENTE) ? 'selected' : '' %>><%= c.NOMBRECOMPLETO %></option><% }) %></select></div>
+    <div class="campo"><label>Producto</label><select name="producto" required><option value="">Seleccione…</option>
+      <% productos.forEach(p => { %><option value="<%= p.IDPRODUCTO %>" <%= String(v('producto')) === String(p.IDPRODUCTO) ? 'selected' : '' %>><%= p.NOMBREPRODUCTO %></option><% }) %></select></div>
+    <div class="campo"><label>Fecha</label><input type="date" name="fecha" required value="<%= v('fecha') || fechaInput(new Date()) %>"></div>
+    <div class="campo"><label>Cantidad</label><input type="number" min="1" name="cantidad" required value="<%= v('cantidad') || 1 %>"></div>
+    <div class="campo ancho"><label>Motivo</label><input name="motivo" required maxlength="200" value="<%= v('motivo') %>"></div>
+  </div>
+  <div class="acciones-form"><button class="btn" type="submit">Guardar</button><a class="btn secundario" href="/devoluciones">Cancelar</a></div>
+</form>
+<%- include('../partials/foot') %>

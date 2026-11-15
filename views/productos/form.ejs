@@ -1,0 +1,18 @@
+<%- include('../partials/head', { titulo }) %>
+<% const g = (a, b) => p ? (p[a] ?? p[b] ?? '') : ''; %>
+<div class="encabezado"><div><h1><%= titulo %></h1></div></div>
+<form class="tarjeta formulario" action="<%= accion %>" method="POST">
+  <div class="campos">
+    <div class="campo ancho"><label>Nombre</label><input name="nombre" required maxlength="100" value="<%= g('NOMBREPRODUCTO','nombre') %>"></div>
+    <div class="campo"><label>Precio (₡)</label><input name="precio" type="number" min="1" step="0.01" required value="<%= g('PRECIOPRODUCTO','precio') %>"></div>
+    <div class="campo"><label>Existencias</label><input name="existencias" type="number" min="0" step="1" required value="<%= g('EXISTENCIASPRODUCTO','existencias') %>"></div>
+    <div class="campo"><label>Categoría</label><select name="categoria" required><option value="">Seleccione…</option>
+      <% cat.categorias.forEach(c => { %><option value="<%= c.IDCATEGORIA %>" <%= String(g('IDCATEGORIA','categoria')) === String(c.IDCATEGORIA) ? 'selected' : '' %>><%= c.NOMBRECATEGORIA %></option><% }) %></select></div>
+    <div class="campo"><label>Marca</label><select name="marca" required><option value="">Seleccione…</option>
+      <% cat.marcas.forEach(c => { %><option value="<%= c.IDMARCA %>" <%= String(g('IDMARCA','marca')) === String(c.IDMARCA) ? 'selected' : '' %>><%= c.NOMBREMARCA %></option><% }) %></select></div>
+    <div class="campo ancho"><label>Proveedor</label><select name="proveedor" required><option value="">Seleccione…</option>
+      <% cat.proveedores.forEach(c => { %><option value="<%= c.IDPROVEEDOR %>" <%= String(g('IDPROVEEDOR','proveedor')) === String(c.IDPROVEEDOR) ? 'selected' : '' %>><%= c.NOMBREPROVEEDOR %></option><% }) %></select></div>
+  </div>
+  <div class="acciones-form"><button class="btn" type="submit">Guardar</button><a class="btn secundario" href="/productos">Cancelar</a></div>
+</form>
+<%- include('../partials/foot') %>
