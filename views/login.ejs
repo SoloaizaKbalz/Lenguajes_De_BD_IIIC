@@ -1,7 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Iniciar sesión · ExtremeTech</title>
   <link rel="icon" href="/img/logo.svg">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
@@ -9,24 +11,65 @@
 </head>
 <body>
 <div class="login">
+
   <section class="login-marca">
     <div class="circulo" style="width:380px;height:380px;background:var(--electric-2);right:-120px;bottom:-140px"></div>
     <div class="circulo" style="width:90px;height:90px;background:var(--neon);right:110px;top:90px"></div>
-    <div class="logo"><img src="/img/logo.svg" alt=""> ExtremeTech</div>
+
+    <div class="logo">
+      <img src="/img/logo.svg" alt=""> ExtremeTech
+    </div>
+
     <h1>Controle su tienda <em>sin límites</em>.</h1>
-    <p>Inventario, ventas, clientes, devoluciones, garantías y servicio técnico en un solo lugar, respaldado por Oracle Cloud.</p>
+
+    <p>
+      Inventario, ventas, clientes, devoluciones, garantías
+      y servicio técnico en un solo lugar, respaldado por Oracle Cloud.
+    </p>
   </section>
+
   <section class="login-form">
     <form class="tarjeta" method="POST" action="/login">
+
       <h2>Bienvenido</h2>
-      <p class="sub">Ingrese con la cédula de un empleado activo.</p>
-      <% if (error) { %><div class="alerta error"><%= error %></div><% } %>
-      <div class="campo"><label for="cedula">Cédula</label>
-        <input id="cedula" name="cedula" placeholder="1-1234-5678" required autofocus<% if (demo) { %> value="1-1111-1111"<% } %>></div>
-      <button class="btn oscuro" type="submit">Ingresar</button>
-      <% if (demo) { %><p class="sub" style="margin-top:14px;font-size:13px">Modo demo: use 1-1111-1111 (administrador).</p><% } %>
+      <p class="sub">Ingrese con su correo electrónico y contraseña.</p>
+
+      <% if (error) { %>
+        <div class="alerta error"><%= error %></div>
+      <% } %>
+
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input
+          type="email"
+          id="correo"
+          name="correo"
+          placeholder="usuario@extremetech.com"
+          autocomplete="username"
+          required
+          autofocus
+        >
+      </div>
+
+      <div class="campo">
+        <label for="password">Contraseña</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Ingrese su contraseña"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <button class="btn oscuro" type="submit">
+        Ingresar
+      </button>
+
     </form>
   </section>
+
 </div>
 </body>
 </html>

@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const path = require('node:path');
 const { iniciarOracle, DEMO, mensajeError } = require('./config/db');
 const { nivelStock } = require('./services/productos.service');
@@ -25,11 +26,38 @@ app.locals.nivelStock = nivelStock;
 app.locals.demo = DEMO;
 
 // ---------- Sesion sencilla por cookie (sin dependencias extra) ----------
+
 function leerUsuario(req) {
-  const m = (req.headers.cookie || '').match(/et_usuario=([^;]+)/);
-  if (!m) return null;
-  try { return JSON.parse(Buffer.from(decodeURIComponent(m[1]), 'base64').toString('utf8')); } catch { return null; }
+  const cookies = req.headers.cookie || '';
+  const tokenCookie = cookies
+    .split(';')
+    .map(c => c.trim())
+    .find(c => c.startsWith('et_token='));
+
+  if (!tokenCookie || !process.env.JWT_SECRET) {
+    return null;
+  }
+
+  try {
+    const token = decodeURIComponent(
+      tokenCookie.slice('et_token='.length)
+    );
+
+    const datos = jwt.verify(token, process.env.JWT_SECRET);
+
+    return {
+      id: datos.idEmpleado,
+      idUsuario: datos.idUsuario,
+      idRol: datos.idRol,
+      rol: datos.idRol,
+      nombre: datos.correo,
+      correo: datos.correo
+    };
+  } catch (error) {
+    return null;
+  }
 }
+
 app.use((req, res, next) => {
   res.locals.usuario = leerUsuario(req);
   res.locals.ok = req.query.ok || null;

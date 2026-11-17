@@ -1,6 +1,23 @@
 const router = require('express').Router();
 const { volver, seguro, mensajeError } = require('./util');
 const s = require('../services/empleados.service');
+function soloAdministrador(req, res, next) {
+  const usuario = res.locals.usuario;
+
+  if (!usuario) {
+    return res.redirect('/login');
+  }
+
+  if (Number(usuario.idRol) !== 1) {
+    return res.status(403).send(
+      'Acceso denegado: esta sección es exclusiva para administradores.'
+    );
+  }
+
+  next();
+}
+
+router.use(soloAdministrador);
 router.get('/', seguro(async (req, res) => res.render('empleados/index', { empleados: await s.listar() })));
 router.get('/nuevo', seguro(async (req, res) => res.render('empleados/form', { e: null, sucursales: await s.sucursales(), accion: '/empleados/nuevo', titulo: 'Nuevo empleado', error: null })));
 router.post('/nuevo', async (req, res) => {

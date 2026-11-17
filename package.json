@@ -9,9 +9,11 @@
     "test:db": "node prueba_conexion.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
     "oracledb": "^6.9.0"
   },
   "devDependencies": {

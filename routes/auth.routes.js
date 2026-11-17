@@ -1,24 +1,80 @@
+
 const router = require('express').Router();
-const { vista } = require('../config/db');
-const { mensajeError } = require('./util');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-router.get('/login', (req, res) => res.render('login', { error: req.query.error || null }));
+const { usarConexion, ESQUEMA } = require('../config/db');
 
-// Ingreso con la cedula de un empleado ACTIVO (consulta VW_EMPLEADOS)
+router.get('/login', (req, res) => {
+  res.render('login', { error: req.query.error || null });
+});
+
 router.post('/login', async (req, res) => {
   try {
-    const cedula = String(req.body.cedula || '').trim();
-    const empleados = await vista('VW_EMPLEADOS');
-    const e = empleados.find(x => x.CEDULA === cedula);
-    if (!e) return res.render('login', { error: 'No existe un empleado con esa cédula.' });
-    if (e.ESTADOEMPLEADO !== 'Activo') return res.render('login', { error: 'El empleado está inactivo.' });
-    const dato = Buffer.from(JSON.stringify({ id: e.IDEMPLEADO, nombre: e.NOMBRECOMPLETO, rol: e.NOMBREROL })).toString('base64');
-    res.setHeader('Set-Cookie', `et_usuario=${encodeURIComponent(dato)}; Path=/; HttpOnly; SameSite=Lax`);
-    res.redirect('/panel');
-  } catch (err) { res.render('login', { error: mensajeError(err) }); }
+    const correo = String(req.body.correo || '').trim().toLowerCase();
+    const password = String(req.body.password || '');
+
+    if (!correo || !password) {
+      return res.status(400).render('login', {
+        error: 'Ingrese su correo y contraseña.'
+      });
+    }
+
+    const usuario = await usarConexion(async (cn) => {
+      const resultado = await cn.execute(
+        `SELECT IDUSUARIO, CORREO, PASSWORD_HASH,
+                IDROL, IDEMPLEADO, ESTADO
+         FROM ${ESQUEMA}.EXT_USUARIOS_TB
+         WHERE LOWER(CORREO) = :correo`,
+        { correo }
+      );
+
+      return resultado.rows[0];
+    });
+
+    const valido = usuario &&
+      await bcrypt.compare(password, usuario.PASSWORD_HASH);
+
+    if (!valido || usuario.ESTADO !== 'Activo') {
+      return res.status(401).render('login', {
+        error: 'Correo o contraseña incorrectos, o cuenta inactiva.'
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        idUsuario: usuario.IDUSUARIO,
+        idEmpleado: usuario.IDEMPLEADO,
+        idRol: usuario.IDROL,
+        correo: usuario.CORREO
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+
+    res.cookie('et_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 2 * 60 * 60 * 1000,
+      path: '/'
+    });
+
+    return res.redirect('/panel');
+
+  } catch (error) {
+    console.error('Error de autenticación:', error.message);
+
+    return res.status(500).render('login', {
+      error: 'No se pudo iniciar sesión. Inténtelo nuevamente.'
+    });
+  }
 });
+
 router.get('/salir', (req, res) => {
-  res.setHeader('Set-Cookie', 'et_usuario=; Path=/; Max-Age=0');
+  res.clearCookie('et_token', { path: '/' });
+  res.clearCookie('et_usuario', { path: '/' });
   res.redirect('/login');
 });
+
 module.exports = router;
