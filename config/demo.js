@@ -93,8 +93,11 @@ function llamarSP(nombre, args = []) {
   if (n === 'SP_AGREGAR_DETALLE_VENTA') {
     const v = ventas.find(x => x.IDVENTA === ent[0]); const p = productos.find(x => x.IDPRODUCTO === ent[1]);
     if (p.EXISTENCIASPRODUCTO < ent[2]) throw new Error(`ORA-20103: Stock insuficiente para ${p.NOMBREPRODUCTO}`);
-    p.EXISTENCIASPRODUCTO -= ent[2]; v.TOTALVENTA += Math.round(p.PRECIOPRODUCTO * ent[2] * 1.13);
+    p.EXISTENCIASPRODUCTO -= ent[2];
     detalle.push({ IDDETALLE: detalle.length + 1, IDVENTA: v.IDVENTA, FECHAVENTA: v.FECHAVENTA, NOMBREPRODUCTO: p.NOMBREPRODUCTO, CANTIDADDETALLE: ent[2], PRECIOUNITARIO: p.PRECIOPRODUCTO, TOTALPARCIAL: p.PRECIOPRODUCTO * ent[2] });
+    const subtotal = detalle.filter(l => l.IDVENTA === v.IDVENTA)
+      .reduce((total, l) => total + l.TOTALPARCIAL, 0);
+    v.TOTALVENTA = Math.round(subtotal * 113) / 100;
     return [++contador];
   }
   console.log(`[demo] ${n}`, ent);

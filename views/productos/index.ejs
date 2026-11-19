@@ -4,16 +4,16 @@
   <input id="buscar" type="search" placeholder="Buscar por nombre de producto…">
   <select id="nivel"><option value="">Todos los niveles</option><option>AGOTADO</option><option>BAJO</option><option>MEDIO</option><option>ALTO</option></select>
 </div>
-<div class="tabla-caja"><table id="tabla"><thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Marca</th><th>Proveedor</th><th class="num">Precio</th><th class="num">Stock</th><th>Nivel</th><th></th></tr></thead><tbody>
+<div class="tabla-caja"><table id="tabla"><thead><tr><th></th><th>ID</th><th>Producto</th><th>Categoría</th><th>Marca</th><th>Proveedor</th><th class="num">Precio</th><th class="num">Stock</th><th>Nivel</th><th></th></tr></thead><tbody>
   <% productos.forEach(p => { %>
     <tr data-nombre="<%= p.NOMBREPRODUCTO.toLowerCase() %>" data-nivel="<%= p.NIVEL %>">
-      <td><%= p.IDPRODUCTO %></td><td class="fuerte"><%= p.NOMBREPRODUCTO %></td><td><%= p.NOMBRECATEGORIA %></td><td><%= p.NOMBREMARCA %></td><td><%= p.NOMBREPROVEEDOR %></td>
+      <td class="miniatura"><img src="/img/productos/<%= p.IDPRODUCTO %>.jpg" alt="" loading="lazy" onerror="this.outerHTML='<span class=&quot;sin-foto&quot;></span>'"></td><td><%= p.IDPRODUCTO %></td><td class="fuerte"><%= p.NOMBREPRODUCTO %></td><td><%= p.NOMBRECATEGORIA %></td><td><%= p.NOMBREMARCA %></td><td><%= p.NOMBREPROVEEDOR %></td>
       <td class="num"><%= colones(p.PRECIOPRODUCTO) %></td><td class="num"><%= p.EXISTENCIASPRODUCTO %></td><td><span class="pill <%= p.NIVEL %>"><%= p.NIVEL %></span></td>
       <td class="acciones"><a class="btn secundario chico" href="/productos/editar/<%= p.IDPRODUCTO %>">Editar</a>
         <form action="/productos/borrar/<%= p.IDPRODUCTO %>" method="POST" onsubmit="return confirm('¿Eliminar este producto?');"><button class="btn peligro chico">Borrar</button></form></td>
     </tr>
   <% }) %>
-  <% if (!productos.length) { %><tr><td colspan="9" class="vacio">No hay productos registrados.</td></tr><% } %>
+  <% if (!productos.length) { %><tr><td colspan="10" class="vacio">No hay productos registrados.</td></tr><% } %>
 </tbody></table></div>
 <script src="/js/filtro-tabla.js"></script>
 <%- include('../partials/foot') %>
