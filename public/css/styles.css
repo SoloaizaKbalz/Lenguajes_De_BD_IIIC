@@ -23,12 +23,13 @@ h1,h2,h3{font-family:var(--font-title);letter-spacing:-.02em}
 .nav-item.activo::after{content:"";position:absolute;right:14px;width:7px;height:7px;border-radius:50%;background:var(--tangerine)}
 .usuario{margin-top:auto;display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:rgba(255,255,255,.1)}
 .usuario .avatar{width:38px;height:38px;border-radius:50%;background:var(--tangerine);color:var(--electric);display:grid;place-items:center;font:700 15px var(--font-title);flex:none}
+.usuario-datos{flex:1;min-width:0;overflow-wrap:anywhere}
 .usuario b{display:block;font-size:14px;line-height:1.2}.usuario small{opacity:.8;font-size:12px}
-.usuario a{margin-left:auto;font-size:12px;opacity:.85;text-decoration:underline}
 .contenido{flex:1;min-width:0;padding:36px 40px 48px}
 .encabezado{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;flex-wrap:wrap}
 .encabezado h1{font-size:32px;font-weight:700}
 .encabezado p{color:var(--muted);margin-top:2px}
+.encabezado.pagina-error{flex-direction:column;text-align:center;padding-top:clamp(24px,10vh,96px)}
 .banner-demo{background:var(--neon);color:var(--electric);text-align:center;font-weight:700;font-size:13px;padding:6px}
 
 /* ---------- Componentes ---------- */
@@ -110,7 +111,8 @@ td.acciones form{display:inline}
 .chip.activo{background:var(--electric);color:var(--cream);border-color:var(--electric)}
 .productos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .prod{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px}
-.prod .foto{height:100px;border-radius:14px;background:var(--sky);display:grid;place-items:center}
+.prod .foto{height:140px;border-radius:14px;background:var(--sky);display:grid;place-items:center}
+.prod .foto{position:relative;overflow:hidden}.prod .foto .foto-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .prod .foto svg{width:40px;stroke:var(--electric);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .prod b{font-size:15px}.prod .fila{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .prod .precio{font:700 18px var(--font-title);letter-spacing:-.02em}.prod small{color:var(--muted);font-weight:500}.prod small.agotado{color:var(--danger)}
@@ -141,3 +143,4 @@ td.acciones form{display:inline}
 
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.rejilla.dos,.pos{grid-template-columns:1fr}.productos-grid{grid-template-columns:repeat(2,1fr)}.tablero{grid-template-columns:1fr}.login{grid-template-columns:1fr}.login-marca{display:none}}
 @media(max-width:800px){.app{flex-direction:column}.sidebar{width:100%;height:auto;position:static}.sidebar nav{flex-direction:row;flex-wrap:wrap}.contenido{padding:24px 16px}.campos{grid-template-columns:1fr}}
+.miniatura{width:56px}.miniatura img,.miniatura .sin-foto{width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--sky);display:block}

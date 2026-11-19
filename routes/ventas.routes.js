@@ -72,6 +72,12 @@ router.get('/:id', seguro(async (req, res) => {
   const lineas = await ventas.detalle(req.params.id);
   const cab = (await ventas.historial()).find(v => String(v.IDVENTA) === req.params.id);
   if (!cab) return volver(res, '/ventas', { error: 'La venta no existe.' });
-  res.render('ventas/detalle', { v: cab, lineas });
+  const subtotal = lineas.reduce((suma, linea) => suma + Number(linea.TOTALPARCIAL), 0);
+  const subtotalCentimos = Math.round(subtotal * 100);
+  const totalCentimos = Math.round(Number(cab.TOTALVENTA) * 100);
+  const ivaCentimos = totalCentimos - subtotalCentimos;
+  const ivaEsperado = Math.round(subtotal * 113) - subtotalCentimos;
+  const iva = ivaCentimos === 0 || ivaCentimos === ivaEsperado ? ivaCentimos / 100 : null;
+  res.render('ventas/detalle', { v: cab, lineas, subtotal, iva });
 }, '/ventas'));
 module.exports = router;

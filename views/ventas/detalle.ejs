@@ -2,6 +2,8 @@
 <div class="encabezado"><div><h1>Venta #<%= v.IDVENTA %></h1><p><%= fecha(v.FECHAVENTA) %> · <%= v.NOMBRECLIENTE %> · atendió <%= v.NOMBREEMPLEADO %></p></div><a class="btn secundario" href="/ventas">Volver al historial</a></div>
 <div class="tabla-caja"><table><thead><tr><th>Producto</th><th class="num">Cantidad</th><th class="num">Precio unitario</th><th class="num">Total</th></tr></thead><tbody>
   <% lineas.forEach(l => { %><tr><td class="fuerte"><%= l.NOMBREPRODUCTO %></td><td class="num"><%= l.CANTIDADDETALLE %></td><td class="num"><%= colones(l.PRECIOUNITARIO) %></td><td class="num fuerte"><%= colones(l.TOTALPARCIAL) %></td></tr><% }) %>
-  <tr><td colspan="3" class="num fuerte">Total de la venta</td><td class="num fuerte"><%= colones(v.TOTALVENTA) %></td></tr>
+  <tr><th scope="row" colspan="3" class="num">Subtotal</th><td class="num"><%= colones(subtotal) %></td></tr>
+  <tr><th scope="row" colspan="3" class="num">IVA</th><td class="num"><%= iva === null ? 'No disponible' : colones(iva) %></td></tr>
+  <tr><th scope="row" colspan="3" class="num fuerte">Total de la venta</th><td class="num fuerte"><%= colones(v.TOTALVENTA) %></td></tr>
 </tbody></table></div>
 <%- include('../partials/foot') %>

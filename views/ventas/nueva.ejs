@@ -9,7 +9,7 @@
     <div class="productos-grid" id="grid">
       <% productos.forEach(p => { const agotado = p.EXISTENCIASPRODUCTO <= 0; %>
         <article class="prod" data-nombre="<%= p.NOMBREPRODUCTO.toLowerCase() %>" data-cat="<%= p.NOMBRECATEGORIA %>">
-          <div class="foto"><svg viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div>
+         <div class="foto"><img class="foto-img" src="/img/productos/<%= p.IDPRODUCTO %>.jpg" alt="" loading="lazy" onerror="this.remove()"><svg viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div>
           <b><%= p.NOMBREPRODUCTO %></b>
           <div class="fila"><span class="precio"><%= colones(p.PRECIOPRODUCTO) %></span><small class="<%= agotado ? 'agotado' : '' %>"><%= agotado ? 'Agotado' : p.EXISTENCIASPRODUCTO + ' disponibles' %></small></div>
           <button class="btn" <%= agotado ? 'disabled' : '' %> data-id="<%= p.IDPRODUCTO %>" data-nombre="<%= p.NOMBREPRODUCTO %>" data-precio="<%= p.PRECIOPRODUCTO %>" data-stock="<%= p.EXISTENCIASPRODUCTO %>"><%= agotado ? 'Sin stock' : '+ Agregar' %></button>

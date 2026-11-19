@@ -39,11 +39,14 @@ const iniciales = (usuario && usuario.nombre ? usuario.nombre.split(' ').slice(0
           <svg viewBox="0 0 24 24"><%- iconos[m[0]] %></svg><%= m[1] %>
         </a>
       <% }) %>
+      <a class="nav-item" href="/salir">
+        <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg>
+        Cerrar sesión
+      </a>
     </nav>
     <div class="usuario">
       <div class="avatar"><%= iniciales %></div>
-      <div><b><%= usuario ? usuario.nombre.split(' ').slice(0,2).join(' ') : 'Grupo 2' %></b><small><%= usuario ? usuario.rol : '' %></small></div>
-      <a href="/salir">Salir</a>
+      <div class="usuario-datos"><b><%= usuario ? usuario.nombre.split(' ').slice(0,2).join(' ') : 'Grupo 2' %></b><small><%= usuario ? usuario.rol : '' %></small></div>
     </div>
   </aside>
   <main class="contenido">
