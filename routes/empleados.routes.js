@@ -9,9 +9,10 @@ function soloAdministrador(req, res, next) {
   }
 
   if (Number(usuario.idRol) !== 1) {
-    return res.status(403).send(
-      'Acceso denegado: esta sección es exclusiva para administradores.'
-    );
+    return res.status(403).render('error', {
+      titulo: 'Acceso denegado',
+      mensaje: 'Esta sección es exclusiva para administradores.'
+    });
   }
 
   next();
