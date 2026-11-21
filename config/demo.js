@@ -1,5 +1,11 @@
-// Datos de ejemplo para revisar las pantallas sin conexion a Oracle (MODO_DEMO=true).
-// Las columnas van en MAYUSCULA porque asi las devuelve oracledb.
+// =====================================================
+// DATOS DE EJEMPLO DEL SISTEMA
+// Simulan la información de Oracle cuando la aplicación
+// se ejecuta en modo de demostración (MODO_DEMO = true).
+// Las columnas utilizan nombres en MAYÚSCULA para
+// mantiene compatibilidad con oracledb.
+// =====================================================
+
 const hoy = new Date();
 const dia = n => { const d = new Date(hoy); d.setDate(d.getDate() - n); d.setHours(10, 30, 0, 0); return d; };
 
@@ -104,3 +110,5 @@ function llamarSP(nombre, args = []) {
   return salidas.map(() => ++contador);
 }
 module.exports = { vista, llamarSP, nivel };
+
+//Codigo verificado

@@ -9,3 +9,5 @@
   if (q) q.addEventListener('input', filtrar);
   if (n) n.addEventListener('change', filtrar);
 })();
+
+//Codigo revisado 

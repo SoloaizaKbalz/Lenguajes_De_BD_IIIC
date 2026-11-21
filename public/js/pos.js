@@ -1,10 +1,23 @@
-// Punto de venta: arma el carrito en el navegador y envia la venta a POST /ventas (JSON)
+// ===============================
+// Punto de venta (POS)
+// Gestiona el carrito de compras y registra ventas
+// ===============================
+
+// Carrito de compras almacenado en memoria
+// id -> {id, nombre, precio, stock, cantidad}
+
 (function () {
   const IVA = 0.13;
   const carrito = new Map(); // id -> { id, nombre, precio, stock, cantidad }
+
+  // Función auxiliar para obtener elementos del DOM por id
   const $ = id => document.getElementById(id);
   const colones = n => '₡' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
+
+// ===============================
+// Renderizar el carrito y calcula totales
+// ===============================
   function pintar() {
     const cont = $('lineas'); cont.innerHTML = '';
     let subtotal = 0;
@@ -22,6 +35,11 @@
     $('total').textContent = colones(subtotal * (1 + IVA));
     $('registrar').disabled = carrito.size === 0;
   }
+
+// ===============================
+// Muestra mensajes de éxito o error
+// ===============================
+
   function aviso(texto, ok) { $('mensaje').innerHTML = `<div class="alerta ${ok ? 'ok' : 'error'}"></div>`; $('mensaje').firstChild.textContent = texto; }
 
   document.querySelectorAll('.prod .btn[data-id]').forEach(b => b.addEventListener('click', () => {
@@ -38,7 +56,10 @@
     pintar();
   });
 
-  // filtros del catalogo
+// ===============================
+// Filtros del catálogo
+// Permiten buscar por nombre y categoría
+// ===============================
   let cat = '';
   function filtrar() {
     const t = $('buscar').value.trim().toLowerCase();
@@ -60,5 +81,10 @@
       window.location.href = `/ventas/${d.idVenta}?ok=${encodeURIComponent(d.mensaje)}`;
     } catch (e) { aviso('No se pudo contactar al servidor.', false); btn.disabled = false; }
   });
+
+// ===============================
+// Inicializa la interfaz
+// ===============================
   pintar();
 })();
+
