@@ -47,12 +47,28 @@ async function registrar({ idCliente, idEmpleado, items }) {
       cn
     );
 
-    for (const linea of lineas) {
-      await llamarSP(
-        'SP_AGREGAR_DETALLE_VENTA',
-        [idVenta, linea.id, linea.cantidad, OUT.NUM],
-        cn
-      );
+    try {
+      for (const linea of lineas) {
+        await llamarSP(
+          'SP_AGREGAR_DETALLE_VENTA',
+          [idVenta, linea.id, linea.cantidad, OUT.NUM],
+          cn
+        );
+      }
+    } catch (error) {
+      if (cn) {
+        try {
+          // Los detalles anteriores ya quedaron confirmados en Oracle.
+          await llamarSP('SP_REVERTIR_VENTA_INCOMPLETA', [idVenta], cn);
+        } catch (errorReversion) {
+          console.error('Falló la reversión de la venta', idVenta, { error, errorReversion });
+          throw new Error(
+            `No se pudo confirmar la reversión de la venta #${idVenta}. Revise el historial antes de volver a registrarla.`,
+            { cause: errorReversion }
+          );
+        }
+      }
+      throw error;
     }
 
     return idVenta;
@@ -62,18 +78,7 @@ async function registrar({ idCliente, idEmpleado, items }) {
     return hacer(null);
   }
 
-  return usarConexion(async cn => {
-    try {
-      const idVenta = await hacer(cn);
-
-      await cn.commit();
-
-      return idVenta;
-    } catch (error) {
-      await cn.rollback();
-      throw error;
-    }
-  });
+  return usarConexion(hacer);
 }
 
 module.exports = {
