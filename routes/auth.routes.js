@@ -1,9 +1,8 @@
-
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const { usarConexion, ESQUEMA } = require('../config/db');
+const { cursor } = require('../config/db');
 
 router.get('/login', (req, res) => {
   res.render('login', { error: req.query.error || null });
@@ -20,17 +19,8 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const usuario = await usarConexion(async (cn) => {
-      const resultado = await cn.execute(
-        `SELECT IDUSUARIO, CORREO, PASSWORD_HASH,
-                IDROL, IDEMPLEADO, ESTADO
-         FROM ${ESQUEMA}.EXT_USUARIOS_TB
-         WHERE LOWER(CORREO) = :correo`,
-        { correo }
-      );
-
-      return resultado.rows[0];
-    });
+    const usuarios = await cursor('SP_BUSCAR_USUARIO_LOGIN', [correo]);
+    const usuario = usuarios[0];
 
     const valido = usuario &&
       await bcrypt.compare(password, usuario.PASSWORD_HASH);
@@ -61,7 +51,6 @@ router.post('/login', async (req, res) => {
     });
 
     return res.redirect('/panel');
-
   } catch (error) {
     console.error('Error de autenticación:', error.message);
 
