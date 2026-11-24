@@ -34,8 +34,8 @@ const iniciales = (usuario && usuario.nombre ? usuario.nombre.split(' ').slice(0
   <aside class="sidebar">
     <div class="logo"><img src="/img/logo.svg" alt=""> ExtremeTech</div>
     <nav>
-      <% menu.forEach(m => { const activo = ruta === m[2] || ruta.startsWith(m[2] + '/'); %>
-        <a class="nav-item <%= activo ? 'activo' : '' %>" href="<%= m[0]==='ventas' ? '/ventas/nueva' : m[2] %>">
+      <% menu.filter(([seccion]) => puedeVer(usuario, seccion)).forEach(m => { const activo = ruta === m[2] || ruta.startsWith(m[2] + '/'); %>
+        <a class="nav-item <%= activo ? 'activo' : '' %>" href="<%= m[0] === 'ventas' && puedeRegistrarVenta(usuario) ? '/ventas/nueva' : m[2] %>">
           <svg viewBox="0 0 24 24"><%- iconos[m[0]] %></svg><%= m[1] %>
         </a>
       <% }) %>

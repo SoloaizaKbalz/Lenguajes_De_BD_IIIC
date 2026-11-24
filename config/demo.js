@@ -6,6 +6,9 @@
 // mantiene compatibilidad con oracledb.
 // =====================================================
 
+const { calcularIvaCentimos } = require('./iva');
+const bcrypt = require('bcrypt');
+
 const hoy = new Date();
 const dia = n => { const d = new Date(hoy); d.setDate(d.getDate() - n); d.setHours(10, 30, 0, 0); return d; };
 
@@ -31,6 +34,20 @@ const empleados = [
   [3, '1-3333-3333', 'Naomy Chan Chacon', 'Tecnico', 'Sucursal Central', 'Activo'],
   [4, '1-4444-4444', 'Jenny Liang Jiang', 'Vendedor', 'Sucursal Puriscal', 'Inactivo']
 ].map(e => ({ IDEMPLEADO: e[0], CEDULA: e[1], NOMBRECOMPLETO: e[2], NOMBREROL: e[3], NOMBRESUCURSAL: e[4], ESTADOEMPLEADO: e[5], ID_SUCURSAL: e[4].includes('Central') ? 1 : 2 }));
+const usuarios = [
+  [1, 'admin@extremetech.demo', 'Admin123!', 1, 1, null],
+  [2, 'vendedor@extremetech.demo', 'Vendedor123!', 2, 2, null],
+  [3, 'tecnico@extremetech.demo', 'Tecnico123!', 4, 3, null],
+  [4, 'cliente@extremetech.demo', 'Cliente123!', 3, null, 1]
+].map(u => ({
+  IDUSUARIO: u[0],
+  CORREO: u[1],
+  PASSWORD_HASH: bcrypt.hashSync(u[2], 10),
+  IDROL: u[3],
+  IDEMPLEADO: u[4],
+  IDCLIENTE: u[5],
+  ESTADO: 'Activo'
+}));
 const ventas = [[1042, 0, 1, 1, 73450], [1041, 1, 3, 2, 520000], [1040, 1, 2, 2, 45200], [1039, 2, 5, 2, 96500], [1038, 3, 4, 1, 24000], [1037, 4, 6, 2, 156000], [1036, 6, 1, 1, 650000], [1035, 8, 3, 2, 18500]]
   .map(v => ({ IDVENTA: v[0], FECHAVENTA: dia(v[1]), IDCLIENTE: v[2], NOMBRECLIENTE: clientes[v[2] - 1].NOMBRECOMPLETO, IDEMPLEADO: v[3], NOMBREEMPLEADO: empleados[v[3] - 1].NOMBRECOMPLETO, TOTALVENTA: v[4] }));
 const detalle = [
@@ -67,6 +84,9 @@ const vistas = {
   VW_PRODUCTOS_PROVEEDOR: () => [1, 2, 3].map(i => { const ps = productos.filter(p => p.IDPROVEEDOR === i); return { IDPROVEEDOR: i, NOMBREPROVEEDOR: ps[0].NOMBREPROVEEDOR, CANTIDADPRODUCTOS: ps.length, VALORINVENTARIO: ps.reduce((s, p) => s + p.PRECIOPRODUCTO * p.EXISTENCIASPRODUCTO, 0) }; })
 };
 const cursores = {
+  SP_BUSCAR_USUARIO_LOGIN: correo => usuarios
+    .filter(u => u.CORREO.toLowerCase() === String(correo || '').trim().toLowerCase())
+    .map(u => ({ ...u })),
   SP_CONSULTAR_CATEGORIA: () => [[1, 'Laptops'], [2, 'Perifericos'], [3, 'Componentes'], [4, 'Accesorios']].map(c => ({ IDCATEGORIA: c[0], NOMBRECATEGORIA: c[1] })),
   SP_CONSULTAR_MARCA: () => [[1, 'Dell'], [2, 'Logitech'], [3, 'Kingston'], [4, 'HP']].map(c => ({ IDMARCA: c[0], NOMBREMARCA: c[1] })),
   SP_CONSULTAR_PROVEEDOR: () => [[1, 'Tecno Import CR'], [2, 'Distribuidora Digital'], [3, 'Compu Mayoreo']].map(c => ({ IDPROVEEDOR: c[0], NOMBREPROVEEDOR: c[1] })),
@@ -80,6 +100,9 @@ function vista(nombre, binds = {}) {
   const f = vistas[nombre.toUpperCase()];
   if (!f) throw new Error(`Modo demo: la vista ${nombre} no tiene datos de ejemplo.`);
   let filas = f();
+  if (nombre === 'VW_VENTAS_REGISTRADAS' && binds.idCliente !== undefined) {
+    filas = filas.filter(v => v.IDCLIENTE === binds.idCliente);
+  }
   if (binds.id !== undefined && filas[0] && 'IDVENTA' in filas[0]) filas = filas.filter(r => r.IDVENTA === Number(binds.id));
   return filas;
 }
@@ -101,9 +124,9 @@ function llamarSP(nombre, args = []) {
     if (p.EXISTENCIASPRODUCTO < ent[2]) throw new Error(`ORA-20103: Stock insuficiente para ${p.NOMBREPRODUCTO}`);
     p.EXISTENCIASPRODUCTO -= ent[2];
     detalle.push({ IDDETALLE: detalle.length + 1, IDVENTA: v.IDVENTA, FECHAVENTA: v.FECHAVENTA, NOMBREPRODUCTO: p.NOMBREPRODUCTO, CANTIDADDETALLE: ent[2], PRECIOUNITARIO: p.PRECIOPRODUCTO, TOTALPARCIAL: p.PRECIOPRODUCTO * ent[2] });
-    const subtotal = detalle.filter(l => l.IDVENTA === v.IDVENTA)
-      .reduce((total, l) => total + l.TOTALPARCIAL, 0);
-    v.TOTALVENTA = Math.round(subtotal * 113) / 100;
+    const subtotalCentimos = detalle.filter(l => l.IDVENTA === v.IDVENTA)
+      .reduce((total, l) => total + Math.round(l.TOTALPARCIAL * 100), 0);
+    v.TOTALVENTA = (subtotalCentimos + calcularIvaCentimos(subtotalCentimos)) / 100;
     return [++contador];
   }
   console.log(`[demo] ${n}`, ent);

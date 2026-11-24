@@ -7,12 +7,12 @@
 // id -> {id, nombre, precio, stock, cantidad}
 
 (function () {
-  const IVA = 0.13;
   const carrito = new Map(); // id -> { id, nombre, precio, stock, cantidad }
 
   // Función auxiliar para obtener elementos del DOM por id
   const $ = id => document.getElementById(id);
-  const colones = n => '₡' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const tasaIva = Number($('iva').dataset.tasa);
+  const colones = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format;
 
 
 // ===============================
@@ -20,19 +20,21 @@
 // ===============================
   function pintar() {
     const cont = $('lineas'); cont.innerHTML = '';
-    let subtotal = 0;
+    let subtotalCentimos = 0;
     if (carrito.size === 0) cont.innerHTML = '<p class="carrito-vacio">Aún no hay productos en la venta.</p>';
     carrito.forEach(l => {
-      subtotal += l.precio * l.cantidad;
+      const importeCentimos = Math.round(l.precio * l.cantidad * 100);
+      subtotalCentimos += importeCentimos;
       const d = document.createElement('div'); d.className = 'linea';
       d.innerHTML = `<div class="nom"><b></b><small>${colones(l.precio)} c/u</small></div>
         <div class="cant"><button data-a="-" data-id="${l.id}">−</button><span>${l.cantidad}</span><button data-a="+" data-id="${l.id}">+</button></div>
-        <div class="sub">${colones(l.precio * l.cantidad)}</div><button class="quitar" data-a="x" data-id="${l.id}" title="Quitar">✕</button>`;
+        <div class="sub">${colones(importeCentimos / 100)}</div><button class="quitar" data-a="x" data-id="${l.id}" title="Quitar">✕</button>`;
       d.querySelector('b').textContent = l.nombre; cont.appendChild(d);
     });
-    $('subtotal').textContent = colones(subtotal);
-    $('iva').textContent = colones(subtotal * IVA);
-    $('total').textContent = colones(subtotal * (1 + IVA));
+    const ivaCentimos = Math.round(subtotalCentimos * tasaIva / 100);
+    $('subtotal').textContent = colones(subtotalCentimos / 100);
+    $('iva').textContent = colones(ivaCentimos / 100);
+    $('total').textContent = colones((subtotalCentimos + ivaCentimos) / 100);
     $('registrar').disabled = carrito.size === 0;
   }
 

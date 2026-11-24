@@ -1,8 +1,9 @@
 <%- include('../partials/head', { titulo: 'Garantías' }) %>
-<div class="encabezado"><div><h1>Garantías</h1><p>Cobertura de productos vendidos · <%= garantias.length %> registros</p></div><a class="btn" href="/garantias/nueva">+ Nueva garantía</a></div>
-<div class="tabla-caja"><table><thead><tr><th>N.º</th><th>Cliente</th><th>Producto</th><th>Inicio</th><th>Vence</th><th>Estado</th><th></th></tr></thead><tbody>
+<% const puedeEditar = puedeEditarGarantias(usuario); %>
+<div class="encabezado"><div><h1>Garantías</h1><p>Cobertura de productos vendidos · <%= garantias.length %> registros</p></div><% if (puedeEditar) { %><a class="btn" href="/garantias/nueva">+ Nueva garantía</a><% } %></div>
+<div class="tabla-caja"><table><thead><tr><th>N.º</th><th>Cliente</th><th>Producto</th><th>Inicio</th><th>Vence</th><th>Estado</th><% if (puedeEditar) { %><th></th><% } %></tr></thead><tbody>
   <% garantias.forEach(g => { %><tr><td class="fuerte">#<%= g.IDGARANTIA %></td><td><%= g.NOMBRECLIENTE %></td><td><%= g.NOMBREPRODUCTO %></td><td><%= fecha(g.FECHAINICIOGARANTIA) %></td><td><%= fecha(g.FECHAFINGARANTIA) %></td><td><span class="pill <%= g.ESTADOGARANTIA %>"><%= g.ESTADOGARANTIA %></span></td>
-    <td class="acciones"><form action="/garantias/borrar/<%= g.IDGARANTIA %>" method="POST" onsubmit="return confirm('¿Eliminar esta garantía?');"><button class="btn peligro chico">Borrar</button></form></td></tr><% }) %>
-  <% if (!garantias.length) { %><tr><td colspan="7" class="vacio">No hay garantías registradas.</td></tr><% } %>
+    <% if (puedeEditar) { %><td class="acciones"><form action="/garantias/borrar/<%= g.IDGARANTIA %>" method="POST" onsubmit="return confirm('¿Eliminar esta garantía?');"><button class="btn peligro chico">Borrar</button></form></td><% } %></tr><% }) %>
+  <% if (!garantias.length) { %><tr><td colspan="<%= puedeEditar ? 7 : 6 %>" class="vacio">No hay garantías registradas.</td></tr><% } %>
 </tbody></table></div>
 <%- include('../partials/foot') %>

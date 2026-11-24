@@ -1,13 +1,14 @@
 <%- include('partials/head', { titulo: 'Panel principal' }) %>
-<% const max = Math.max(1, ...d.dias.map(x => x.total)); %>
-<div class="encabezado"><div><h1>Panel principal</h1><p>Resumen del negocio de hoy.</p></div><a class="btn" href="/ventas/nueva">+ Nueva venta</a></div>
+<% const panelCompleto = puedeVer(usuario, 'ventas'); %>
+<div class="encabezado"><div><h1>Panel principal</h1><p><%= panelCompleto ? 'Resumen del negocio de hoy.' : 'Resumen del inventario.' %></p></div><% if (panelCompleto) { %><a class="btn" href="/ventas/nueva">+ Nueva venta</a><% } %></div>
 <div class="kpis">
-  <div class="kpi destacado"><span>Ventas del mes</span><b><%= colones(d.ventasMes) %></b><small><%= d.cantidadVentasMes %> ventas</small></div>
-  <div class="kpi"><span>Productos en inventario</span><b><%= d.totalProductos %></b><small>Valor <%= colones(d.valorInventario) %></small></div>
-  <div class="kpi"><span>Clientes registrados</span><b><%= d.totalClientes %></b></div>
+  <% if (panelCompleto) { %><div class="kpi destacado"><span>Ventas del mes</span><b><%= colones(d.ventasMes) %></b><small><%= d.cantidadVentasMes %> ventas</small></div><% } %>
+  <div class="kpi"><span>Productos en inventario</span><b><%= d.totalProductos %></b><% if (panelCompleto) { %><small>Valor <%= colones(d.valorInventario) %></small><% } %></div>
+  <% if (panelCompleto) { %><div class="kpi"><span>Clientes registrados</span><b><%= d.totalClientes %></b></div><% } %>
   <div class="kpi"><span>Existencias bajas</span><b><%= d.stockBajo.length %></b><small>Menos de 10 unidades</small></div>
 </div>
 <div class="rejilla dos">
+  <% if (panelCompleto) { const max = Math.max(1, ...d.dias.map(x => x.total)); %>
   <section class="tarjeta"><h2>Ventas de los últimos 7 días</h2>
     <div class="barras">
       <% d.dias.forEach(x => { %>
@@ -15,6 +16,7 @@
       <% }) %>
     </div>
   </section>
+  <% } %>
   <section class="tarjeta"><h2>Alertas de stock</h2>
     <% if (d.stockBajo.length === 0) { %><p class="vacio">Sin alertas de stock.</p><% } %>
     <ul class="lista-simple">
@@ -24,11 +26,11 @@
     </ul>
   </section>
 </div>
-<section class="tarjeta" style="margin-top:22px"><h2>Últimas ventas</h2>
+<% if (panelCompleto) { %><section class="tarjeta" style="margin-top:22px"><h2>Últimas ventas</h2>
   <table><thead><tr><th>N.º</th><th>Fecha</th><th>Cliente</th><th>Empleado</th><th class="num">Total</th></tr></thead><tbody>
     <% d.ultimasVentas.forEach(v => { %>
       <tr><td class="fuerte"><a href="/ventas/<%= v.IDVENTA %>">#<%= v.IDVENTA %></a></td><td><%= fecha(v.FECHAVENTA) %></td><td><%= v.NOMBRECLIENTE %></td><td><%= v.NOMBREEMPLEADO %></td><td class="num fuerte"><%= colones(v.TOTALVENTA) %></td></tr>
     <% }) %>
   </tbody></table>
-</section>
+</section><% } %>
 <%- include('partials/foot') %>
