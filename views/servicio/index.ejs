@@ -1,6 +1,6 @@
 <%- include('../partials/head', { titulo: 'Servicio técnico' }) %>
 <% const cols = [['Pendiente','Pendientes','var(--tangerine)'],['En reparacion','En reparación','var(--electric)'],['Finalizado','Finalizadas','var(--neon)']]; %>
-<div class="encabezado"><div><h1>Servicio técnico</h1><p>Órdenes de reparación por estado</p></div><a class="btn" href="/servicio-tecnico/nueva">+ Nueva orden</a></div>
+<div class="encabezado"><div><h1>Servicio técnico</h1><p>Órdenes de reparación por estado</p></div><% if (puedeCrear) { %><a class="btn" href="/servicio-tecnico/nueva">+ Nueva orden</a><% } %></div>
 <div class="tablero">
   <% cols.forEach(([est, titulo, color]) => { const lista = ordenes.filter(o => o.ESTADOSERVICIO === est); %>
     <section class="columna"><h2><i style="background:<%= color %>"></i><%= titulo %> <span><%= lista.length %></span></h2>
@@ -8,11 +8,11 @@
         <article class="orden"><b>#<%= o.IDSERVICIO %> · <%= o.NOMBREPRODUCTO %></b>
           <span><%= o.DESCRIPCIONPROBLEMA %></span>
           <div class="pie"><span><%= o.NOMBRECLIENTE %></span><span><%= fecha(o.FECHAINGRESO) %></span></div>
-          <% if (est === 'Pendiente') { %>
+          <% if (puedeActualizar && est === 'Pendiente') { %>
             <form action="/servicio-tecnico/reparar/<%= o.IDSERVICIO %>" method="POST"><button class="btn chico">Iniciar reparación</button></form>
-          <% } else if (est === 'En reparacion') { %>
+          <% } else if (puedeActualizar && est === 'En reparacion') { %>
             <form action="/servicio-tecnico/cerrar/<%= o.IDSERVICIO %>" method="POST"><input type="number" name="costo" min="0" step="500" placeholder="Costo ₡" value="<%= o.COSTOSERVICIO || '' %>" required><button class="btn chico">Finalizar</button></form>
-          <% } else { %><div class="pie"><span>Costo</span><span><%= colones(o.COSTOSERVICIO) %></span></div><% } %>
+          <% } else if (est === 'Finalizado') { %><div class="pie"><span>Costo</span><span><%= colones(o.COSTOSERVICIO) %></span></div><% } %>
         </article>
       <% }) %>
       <% if (!lista.length) { %><p class="vacio">Sin órdenes.</p><% } %>

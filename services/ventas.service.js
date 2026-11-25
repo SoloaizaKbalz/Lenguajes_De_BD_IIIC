@@ -1,8 +1,10 @@
 
 const { vista, llamarSP, usarConexion, OUT, DEMO } = require('../config/db');
 
-async function historial() {
-  return vista('VW_VENTAS_REGISTRADAS', 'ORDER BY IDVENTA DESC');
+async function historial(idCliente) {
+  if (idCliente === undefined) return vista('VW_VENTAS_REGISTRADAS', 'ORDER BY IDVENTA DESC');
+  if (!Number.isSafeInteger(idCliente) || idCliente <= 0) return [];
+  return vista('VW_VENTAS_REGISTRADAS', 'WHERE IDCLIENTE = :idCliente ORDER BY IDVENTA DESC', { idCliente });
 }
 
 async function detalle(id) {

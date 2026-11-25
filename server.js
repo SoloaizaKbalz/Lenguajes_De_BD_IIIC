@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const path = require('node:path');
 const { iniciarOracle, DEMO, mensajeError } = require('./config/db');
 const { nivelStock } = require('./services/productos.service');
+const { accesos, nombreRol, puedeVer, puedeEditarProductos, puedeEditarGarantias, puedeRegistrarVenta } = require('./config/roles');
+const permitirRoles = require('./routes/permitirRoles');
+const { TASA_IVA } = require('./config/iva');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +19,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ---------- Ayudas disponibles en todas las vistas ----------
 const miles = n => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 app.locals.colones = n => '₡' + miles(n);
+app.locals.colonesVenta = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format;
+app.locals.tasaIva = TASA_IVA;
 app.locals.fecha = f => {
   if (!f) return '';
   const d = new Date(f);
@@ -24,6 +29,7 @@ app.locals.fecha = f => {
 app.locals.fechaInput = f => (f ? new Date(f).toISOString().slice(0, 10) : '');
 app.locals.nivelStock = nivelStock;
 app.locals.demo = DEMO;
+Object.assign(app.locals, { puedeVer, puedeEditarProductos, puedeEditarGarantias, puedeRegistrarVenta });
 
 // ---------- Sesion sencilla por cookie (sin dependencias extra) ----------
 
@@ -48,8 +54,9 @@ function leerUsuario(req) {
     return {
       id: datos.idEmpleado,
       idUsuario: datos.idUsuario,
+      idCliente: datos.idCliente,
       idRol: datos.idRol,
-      rol: datos.idRol,
+      rol: nombreRol(datos.idRol),
       nombre: datos.correo,
       correo: datos.correo
     };
@@ -69,17 +76,21 @@ app.use((req, res, next) => {
 });
 
 app.use('/', require('./routes/auth.routes'));
-app.use('/panel', require('./routes/panel.routes'));
-app.use('/productos', require('./routes/productos.routes'));
-app.use('/ventas', require('./routes/ventas.routes'));
-app.use('/clientes', require('./routes/clientes.routes'));
+app.use('/panel', permitirRoles(...accesos.panel), require('./routes/panel.routes'));
+app.use('/productos', permitirRoles(...accesos.productos), require('./routes/productos.routes'));
+app.use('/ventas', permitirRoles(...accesos.ventas), require('./routes/ventas.routes'));
+app.use('/clientes', permitirRoles(...accesos.clientes), require('./routes/clientes.routes'));
 app.use('/empleados', require('./routes/empleados.routes'));
-app.use('/devoluciones', require('./routes/devoluciones.routes'));
-app.use('/garantias', require('./routes/garantias.routes'));
-app.use('/servicio-tecnico', require('./routes/servicio.routes'));
-app.use('/reportes', require('./routes/reportes.routes'));
+app.use('/devoluciones', permitirRoles(...accesos.devoluciones), require('./routes/devoluciones.routes'));
+app.use('/garantias', permitirRoles(...accesos.garantias), require('./routes/garantias.routes'));
+app.use('/servicio-tecnico', permitirRoles(...accesos.servicio), require('./routes/servicio.routes'));
+app.use('/reportes', permitirRoles(...accesos.reportes), require('./routes/reportes.routes'));
 
-app.get('/', (req, res) => res.redirect('/panel'));
+app.get('/', (req, res) => {
+  if (puedeVer(res.locals.usuario, 'panel')) return res.redirect('/panel');
+  if (puedeVer(res.locals.usuario, 'ventas')) return res.redirect('/ventas');
+  return res.render('sesion');
+});
 app.use((req, res) => res.status(404).render('error', { titulo: 'Página no encontrada', mensaje: 'La dirección que busca no existe.' }));
 app.use((err, req, res, next) => res.status(500).render('error', { titulo: 'Ocurrió un error', mensaje: mensajeError(err) }));
 

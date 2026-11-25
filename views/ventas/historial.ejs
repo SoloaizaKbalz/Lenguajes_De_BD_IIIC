@@ -1,7 +1,7 @@
 <%- include('../partials/head', { titulo: 'Historial de ventas' }) %>
-<div class="encabezado"><div><h1>Ventas</h1><p>Historial de ventas registradas</p></div><a class="btn" href="/ventas/nueva">+ Nueva venta</a></div>
-<div class="tabla-caja"><table><thead><tr><th>N.º</th><th>Fecha</th><th>Cliente</th><th>Empleado</th><th class="num">Total</th><th></th></tr></thead><tbody>
-  <% ventas.forEach(v => { %><tr><td class="fuerte">#<%= v.IDVENTA %></td><td><%= fecha(v.FECHAVENTA) %></td><td><%= v.NOMBRECLIENTE %></td><td><%= v.NOMBREEMPLEADO %></td><td class="num fuerte"><%= colones(v.TOTALVENTA) %></td><td class="acciones"><a class="btn secundario chico" href="/ventas/<%= v.IDVENTA %>">Ver detalle</a></td></tr><% }) %>
+<div class="encabezado"><div><h1>Ventas</h1><p>Historial de ventas registradas</p></div><% if (puedeRegistrarVenta(usuario)) { %><a class="btn" href="/ventas/nueva">+ Nueva venta</a><% } %></div>
+<div class="tabla-caja"><table><thead><tr><th>N.º</th><th>Fecha</th><th>Cliente</th><th>Empleado</th><th class="num">Total con IVA</th><th></th></tr></thead><tbody>
+  <% ventas.forEach(v => { %><tr><td class="fuerte">#<%= v.IDVENTA %></td><td><%= fecha(v.FECHAVENTA) %></td><td><%= v.NOMBRECLIENTE %></td><td><%= v.NOMBREEMPLEADO %></td><td class="num fuerte"><%= colonesVenta(v.TOTALVENTA) %></td><td class="acciones"><a class="btn secundario chico" href="/ventas/<%= v.IDVENTA %>">Ver detalle</a></td></tr><% }) %>
   <% if (!ventas.length) { %><tr><td colspan="6" class="vacio">Aún no hay ventas registradas.</td></tr><% } %>
 </tbody></table></div>
 <%- include('../partials/foot') %>

@@ -11,7 +11,7 @@
         <article class="prod" data-nombre="<%= p.NOMBREPRODUCTO.toLowerCase() %>" data-cat="<%= p.NOMBRECATEGORIA %>">
          <div class="foto"><img class="foto-img" src="/img/productos/<%= p.IDPRODUCTO %>.jpg" alt="" loading="lazy" onerror="this.remove()"><svg viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div>
           <b><%= p.NOMBREPRODUCTO %></b>
-          <div class="fila"><span class="precio"><%= colones(p.PRECIOPRODUCTO) %></span><small class="<%= agotado ? 'agotado' : '' %>"><%= agotado ? 'Agotado' : p.EXISTENCIASPRODUCTO + ' disponibles' %></small></div>
+          <div class="fila"><span class="precio"><%= colonesVenta(p.PRECIOPRODUCTO) %></span><small class="<%= agotado ? 'agotado' : '' %>"><%= agotado ? 'Agotado' : p.EXISTENCIASPRODUCTO + ' disponibles' %></small></div>
           <button class="btn" <%= agotado ? 'disabled' : '' %> data-id="<%= p.IDPRODUCTO %>" data-nombre="<%= p.NOMBREPRODUCTO %>" data-precio="<%= p.PRECIOPRODUCTO %>" data-stock="<%= p.EXISTENCIASPRODUCTO %>"><%= agotado ? 'Sin stock' : '+ Agregar' %></button>
         </article>
       <% }) %>
@@ -24,9 +24,9 @@
     <div class="campo"><label>Atiende</label><select id="empleado"><option value="">Seleccione…</option>
       <% empleados.forEach(e => { %><option value="<%= e.IDEMPLEADO %>" <%= usuario && usuario.id === e.IDEMPLEADO ? 'selected' : '' %>><%= e.NOMBRECOMPLETO %></option><% }) %></select></div>
     <div id="lineas"><p class="carrito-vacio">Aún no hay productos en la venta.</p></div>
-    <div class="resumen-fila"><span>Subtotal</span><span id="subtotal">₡0</span></div>
-    <div class="resumen-fila"><span>IVA 13 %</span><span id="iva">₡0</span></div>
-    <div class="resumen-total"><span>Total</span><b id="total">₡0</b></div>
+    <div class="resumen-fila"><span>Subtotal</span><span id="subtotal"><%= colonesVenta(0) %></span></div>
+    <div class="resumen-fila"><span>IVA <%= tasaIva %> %</span><span id="iva" data-tasa="<%= tasaIva %>"><%= colonesVenta(0) %></span></div>
+    <div class="resumen-total"><span>Total</span><b id="total"><%= colonesVenta(0) %></b></div>
     <div id="mensaje"></div>
     <button class="btn" id="registrar" disabled>Registrar venta</button>
   </aside>

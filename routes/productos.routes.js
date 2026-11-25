@@ -2,11 +2,15 @@
 const router = require('express').Router();
 const { volver, seguro, mensajeError } = require('./util');
 const s = require('../services/productos.service');
+const permitirRoles = require('./permitirRoles');
+const { administracion } = require('../config/roles');
 
 router.get('/', seguro(async (req, res) => {
   const productos = await s.listar();
   res.render('productos/index', { productos });
 }));
+
+router.use(permitirRoles(...administracion));
 
 router.get('/nuevo', seguro(async (req, res) => {
   res.render('productos/form', {

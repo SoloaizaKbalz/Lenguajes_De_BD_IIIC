@@ -35,6 +35,7 @@ router.post('/login', async (req, res) => {
       {
         idUsuario: usuario.IDUSUARIO,
         idEmpleado: usuario.IDEMPLEADO,
+        idCliente: usuario.IDCLIENTE ?? null,
         idRol: usuario.IDROL,
         correo: usuario.CORREO
       },
@@ -50,7 +51,7 @@ router.post('/login', async (req, res) => {
       path: '/'
     });
 
-    return res.redirect('/panel');
+    return res.redirect('/');
   } catch (error) {
     console.error('Error de autenticación:', error.message);
 

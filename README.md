@@ -28,7 +28,12 @@ Configura los datos de ejemplo para el entorno de demostración. En la terminal 
 - CMD: `set MODO_DEMO=true && npm start`
 - Mac/Linux/Git Bash: `MODO_DEMO=true npm start`
 
-El inicio de sesión en modo demo está pendiente. Los datos demo viven en memoria y se pierden al reiniciar.
+Los datos demo viven en memoria y se pierden al reiniciar.
+Puede iniciar sesión con cualquiera de estas cuentas:
+| Administrador | `admin@extremetech.demo` | `Admin123!` |
+| Vendedor | `vendedor@extremetech.demo` | `Vendedor123!` |
+| Técnico | `tecnico@extremetech.demo` | `Tecnico123!` |
+| Cliente | `cliente@extremetech.demo` | `Cliente123!` |
 
 ## 3. Estructura
 ```
