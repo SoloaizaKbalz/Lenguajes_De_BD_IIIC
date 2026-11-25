@@ -3,7 +3,7 @@
 <div class="tabla-caja"><table><thead><tr><th>Producto</th><th class="num">Cantidad</th><th class="num">Precio unitario</th><th class="num">Monto</th></tr></thead><tbody>
   <% lineas.forEach(l => { %><tr><td class="fuerte"><%= l.NOMBREPRODUCTO %></td><td class="num"><%= l.CANTIDADDETALLE %></td><td class="num"><%= colonesVenta(l.PRECIOUNITARIO) %></td><td class="num fuerte"><%= colonesVenta(l.TOTALPARCIAL) %></td></tr><% }) %>
   <tr><th scope="row" colspan="3" class="num">Subtotal</th><td class="num"><%= colonesVenta(subtotal) %></td></tr>
-  <tr><th scope="row" colspan="3" class="num"><%= etiquetaIva %></th><td class="num"><%= iva === null ? 'No disponible' : colonesVenta(iva) %></td></tr>
-  <tr><th scope="row" colspan="3" class="num fuerte">Total</th><td class="num fuerte"><%= colonesVenta(v.TOTALVENTA) %></td></tr>
+  <tr><th scope="row" colspan="3" class="num"><%= etiquetaIva %></th><td class="num"><%= colonesVenta(iva) %></td></tr>
+  <tr><th scope="row" colspan="3" class="num fuerte">Total con IVA</th><td class="num fuerte"><%= colonesVenta(v.TOTALVENTA) %></td></tr>
 </tbody></table></div>
 <%- include('../partials/foot') %>

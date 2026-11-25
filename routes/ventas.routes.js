@@ -6,7 +6,7 @@ const clientes = require('../services/clientes.service');
 const empleados = require('../services/empleados.service');
 const permitirRoles = require('./permitirRoles');
 const { comercial, CLIENTE } = require('../config/roles');
-const { TASA_IVA, calcularIvaCentimos } = require('../config/iva');
+const { TASA_IVA } = require('../config/iva');
 
 const permitirRegistro = permitirRoles(...comercial);
 
@@ -73,10 +73,11 @@ router.get('/:id', seguro(async (req, res) => {
   const lineas = await ventas.detalle(cab.IDVENTA);
   const subtotalCentimos = lineas.reduce((suma, linea) => suma + Math.round(Number(linea.TOTALPARCIAL) * 100), 0);
   const totalCentimos = Math.round(Number(cab.TOTALVENTA) * 100);
-  const ivaCentimos = totalCentimos - subtotalCentimos;
-  const ivaEsperado = calcularIvaCentimos(subtotalCentimos);
-  const iva = ivaCentimos === 0 || ivaCentimos === ivaEsperado ? ivaCentimos / 100 : null;
-  const etiquetaIva = ivaCentimos === ivaEsperado ? `IVA ${TASA_IVA} %` : 'IVA';
+  const ivaCentimos = cab.MONTO_IVA == null
+    ? totalCentimos - subtotalCentimos
+    : Math.round(Number(cab.MONTO_IVA) * 100);
+  const iva = ivaCentimos / 100;
+  const etiquetaIva = `IVA (${TASA_IVA} %)`;
   res.render('ventas/detalle', { v: cab, lineas, subtotal: subtotalCentimos / 100, iva, etiquetaIva });
 }, '/ventas'));
 module.exports = router;
